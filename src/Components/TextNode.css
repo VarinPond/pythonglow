@@ -1,0 +1,33 @@
+.text-updater-node .title {
+  font-size: 10px;
+  font-weight: bold;
+  height: fit-content;
+  padding: 5px;
+}
+.text-updater-node {
+    border-radius: 5px;
+    background: white;
+    font-size: 5px;
+  }
+  
+  .text-updater-node label {
+    display: block;
+    color: #777;
+  }
+  .text-updater-node input {
+    display: block;
+    color: #777;
+  }
+  .text-updater-node select {
+    width: 100%;
+    display: block;
+    color: #777;
+  }
+  .text-updater-node option {
+    display: block;
+    color: #777;
+    font-size: 16px;
+  }
+
+
+  
