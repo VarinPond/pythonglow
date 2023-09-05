@@ -4,11 +4,15 @@ import './PrintNode.css'
 
 function PrintNode({ data, isConnectable }) {
     return (
-        <div className="print-node">
+        <>
+            <div className="print-node">
 
-            <span className='title'>print()</span>
-            <Handle type="target" position={Position.Top} id="a" isConnectable={isConnectable} />
-        </div>
+                <span className='title'>print()</span>
+                <Handle type="target" position={Position.Top} id="a" isConnectable={isConnectable} />
+                <Handle type="source" position={Position.Bottom} id="a" isConnectable={isConnectable} />
+
+            </div>
+        </>
     );
 }
 
