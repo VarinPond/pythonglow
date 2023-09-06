@@ -1,10 +1,11 @@
 .text-updater-node .title {
-  font-size: 10px;
+  font-size: 14px;
   font-weight: bold;
   height: fit-content;
   padding: 5px;
 }
 .text-updater-node {
+  
     border-radius: 5px;
     background: white;
     font-size: 5px;
@@ -27,6 +28,10 @@
     display: block;
     color: #777;
     font-size: 16px;
+  }
+
+  .accordion{
+    font-size: 8px;
   }
 
 

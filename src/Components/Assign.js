@@ -1,5 +1,6 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Handle, Position } from 'reactflow';
+import './TextNode.css'
 
 export default memo(({ data, isConnectable }) => {
     const [blockData, setBlockData] = useState({
@@ -8,17 +9,29 @@ export default memo(({ data, isConnectable }) => {
         type: data.type,
         code: '',
     });
-    // all field onChange
-    const onChange = (evt) => {
+
+    const onValueChange = (evt) => {
         setBlockData({
             ...blockData,
-            [evt.target.name]: evt.target.value,
+            value: evt,
         });
-
-        data.onChange(blockData);
-
     };
-    
+    const onNameChange = (evt) => {
+        setBlockData({
+            ...blockData,
+            name: evt,
+        });
+    };
+    const onTypeChange = (evt) => {
+        setBlockData({
+            ...blockData,
+            type: evt,
+        });
+    };
+    useEffect(()=>{
+        data.onChange(blockData);
+    }, [blockData])
+
 
     return (
         <>
@@ -56,7 +69,7 @@ export default memo(({ data, isConnectable }) => {
                                     name="type"
                                     id="type"
                                     value={blockData.type}
-                                    onChange={onChange}
+                                    onChange={(e)=> onTypeChange(e.target.value)}
                                 >
                                     <option value="text">String</option>
                                     <option value="number">Number</option>
@@ -70,7 +83,8 @@ export default memo(({ data, isConnectable }) => {
                                     id="name"
                                     name="name"
                                     value={blockData.name}
-                                    onChange={onChange}
+                                    onChange={(e)=> onNameChange(e.target.value)}
+
                                     className="nodrag"
                                 />
                             </div>
@@ -81,7 +95,8 @@ export default memo(({ data, isConnectable }) => {
                                     id="value"
                                     name="value"
                                     value={blockData.value}
-                                    onChange={onChange}
+                                    onChange={(e)=> onValueChange(e.target.value)}
+
                                     className="nodrag"
                                 />
                             </div>
