@@ -1,6 +1,7 @@
 import React, { useState, useEffect, memo } from 'react';
 import { Handle, Position } from 'reactflow';
 import './TextNode.css';
+import './PrintNode.css';
 
 function TextUpdaterNode(props) {
     const [blockData, setBlockData] = useState({
