@@ -1,0 +1,40 @@
+{
+    "flowData": [
+        {
+            "id": "0",
+            "type": "start",
+            "position": {
+                "x": 91,
+                "y": -141
+            },
+            "data": {
+                "type": "start",
+                "id": "0"
+            }
+        },
+        {
+            "id": "1",
+            "type": "end",
+            "position": {
+                "x": 18,
+                "y": 100.5
+            },
+            "data": {
+                "type": "end",
+                "id": "1"
+            }
+        },
+        {
+            "id": "2",
+            "type": "assign",
+            "position": {
+                "x": 107,
+                "y": -75.5
+            },
+            "data": {
+                "type": "assign",
+                "id": "2"
+            }
+        }
+    ]
+}
