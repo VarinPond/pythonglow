@@ -1,49 +1,62 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Handle, Position } from 'reactflow';
 
-class fileData {
-    constructor(data) {
-        this.name = data.name;
-        this.data = data.data;
-    }
-}
-
 export default memo(({ data, isConnectable }) => {
-    const [SelectColumnData, setSelectColumnData] = useState({
+    const [SelectedColumn, setSelectedColumn] = useState({
         id: data.id,
-        dataframe: '',
-    });
-    const [options, setOptions] = useState([]);
-    const onChange = (evt) => {
-        setSelectColumnData({
-            ...SelectColumnData,
-            [evt.target.name]: evt.target.value,
-        });
+        code: '',
+        colname: [],
+        onChange: data.onChange,
 
-        data.onChange(data.id, {
-            ...SelectColumnData,
-            [evt.target.name]: evt.target.value,
-        });
+    });
+    const [selectedColumns, setSelectedColumns] = useState([]);
+    const [colList, setColList] = useState([]);
+
+   const onCheck = (col) => {
+
+        if (selectedColumns.includes(col)) {
+            setSelectedColumns(selectedColumns.filter((item) => item !== col));
+        } else {
+            setSelectedColumns([...selectedColumns, col]);
+        }
     };
+    
+    useEffect(() => {
+        const colList = data.cols || ['No Data'];
+
+        const mappedOptions = colList.map((col) => (
+            <div key={col.name} style={{ fontSize: "2px" }}>
+                <div className='d-flex justify-content-between'>
+                    <input
+                        type="checkbox"
+                        value={col}
+                        checked={selectedColumns.includes(col)}
+                        onChange={() => onCheck(col)}
+                        style={{fontSize: "2px", width: "20px", height: "20px"}}
+                    />
+                    {col}
+                </div>
+            </div>
+        ));
+        setColList(mappedOptions);
+
+    }, [ ]);
 
     useEffect(() => {
-        const fileList = data.fileList || [ new fileData({name: "No Data", data: ""})];
-
-        const mappedOptions = fileList.map((file) => {
-            return (
-                <option  value={file.name} style={{fontSize:"18px"}}>
-                    {file.name}
-                </option>
-            );
+        console.log(data);
+        data.onChange(data.id, {
+            ...SelectedColumn,
+            colname: selectedColumns,
         });
+        
+    }, [selectedColumns]);
 
-        setOptions(mappedOptions);
-    }, []);
 
 
+    
     return (
         <>
-            <div className="accordion text-updater-node " id={"accordion" + data.id} style={{ width: "120px" }}>
+            <div className="accordion text-updater-node " id={'accordion' + data.id} style={{ width: '120px' }}>
                 <Handle
                     type="target"
                     position={Position.top}
@@ -51,56 +64,37 @@ export default memo(({ data, isConnectable }) => {
                     onConnect={(params) => console.log('handle onConnect', params)}
                     isConnectable={isConnectable}
                 />
-                <div className="accordion-header" id={"headingOne" + data.id}>
+                <div className="accordion-header" id={'headingOne' + data.id}>
                     <button
                         className="title accordion-button"
                         type="button"
                         data-bs-toggle="collapse"
-                        data-bs-target={"#collapse" + data.id}
+                        data-bs-target={'#collapse' + data.id}
                         aria-expanded="true"
-                        aria-controls={"collapse" + data.id}
-                        style={{ fontSize: "0.5rem", padding: "0.2rem", borderRadius: "0.2rem" }}
+                        aria-controls={'collapse' + data.id}
+                        style={{ fontSize: '0.5rem', padding: '0.2rem', borderRadius: '0.2rem' }}
                     >
                         Select Column
                     </button>
                 </div>
                 <div className="accordion-item">
-
                     <div
-                        id={"collapse" + data.id}
+                        id={'collapse' + data.id}
                         className="accordion-collapse collapse show"
-                        aria-labelledby={"headingOne" + data.id}
-                        data-bs-parent={"#accordion" + data.id}
+                        aria-labelledby={'headingOne' + data.id}
+                        data-bs-parent={'#accordion' + data.id}
                     >
-                        <div className="accordion-body" style={{ padding: "5px" }}>
+                        <div className="accordion-body" style={{ padding: '5px' }}>
                             <div>
-                                <div style={{ fontSize: '5px' }}>
-                                    <label htmlFor="dataframe" style={{ fontSize: '5px' }}>
-                                        Type:
-                                    </label>
-                                    <select
-                                        name="dataframe"
-                                        id="dataframe"
-                                        value={SelectColumnData.dataframe}
-                                        onChange={onChange}
-                                        style={{ fontSize: '5px', width: '100%' }}
-                                    >
-                                        {options}
-                                    </select>
+                                <div>
+                                    {colList}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
-            <Handle
-                type="source"
-                position={Position.Bottom}
-                id="a"
-                isConnectable={isConnectable}
-            />
+            <Handle type="source" position={Position.Bottom} id="a" isConnectable={isConnectable} />
         </>
-
     );
 });

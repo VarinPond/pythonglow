@@ -1,40 +1,26 @@
-{
-    "flowData": [
-        {
-            "id": "0",
-            "type": "start",
-            "position": {
-                "x": 91,
-                "y": -141
-            },
-            "data": {
-                "type": "start",
-                "id": "0"
-            }
-        },
-        {
-            "id": "1",
-            "type": "end",
-            "position": {
-                "x": 18,
-                "y": 100.5
-            },
-            "data": {
-                "type": "end",
-                "id": "1"
-            }
-        },
-        {
-            "id": "2",
-            "type": "assign",
-            "position": {
-                "x": 107,
-                "y": -75.5
-            },
-            "data": {
-                "type": "assign",
-                "id": "2"
-            }
-        }
-    ]
-}
+[
+  {
+    "id": "0",
+    "type": "start",
+    "position": { "x": -73, "y": -173 },
+    "data": { "type": "start", "id": "0" }
+  },
+  {
+    "id": "1",
+    "type": "import",
+    "position": { "x": 63, "y": -178.5 },
+    "data": {
+      "id": "1",
+      "code": "import pandas as pd\ndf = pd.read_csv('moc.csv')",
+      "fileData": "x,y\r\n2,2\r\n0,5\r\n6,8\r\n6,1\r\n8,5\r\n6,2\r\n",
+      "fileName": "moc.csv",
+      "cols": ["x", "y"]
+    }
+  },
+  {
+    "id": "2",
+    "type": "end",
+    "position": { "x": -22, "y": -24 },
+    "data": { "type": "end", "id": "2" }
+  }
+]
