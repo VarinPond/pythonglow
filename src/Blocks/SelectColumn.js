@@ -41,7 +41,7 @@ function SelectColumnNew({ data, isConnectable }) {
   useEffect(() => {
     data.onChange(data.id, {
         ...data,
-        selectedColumns: selectedColumns,
+        cols: selectedColumns,
     });
 
   }, [selectedColumns]);

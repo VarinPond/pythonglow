@@ -18,6 +18,7 @@ import ImportNode from "./Blocks/ImportNode";
 import SelectColumnNode from "./Blocks/SelectColumnNode";
 import ExportNode from "./Blocks/ExportNode";
 import SelectColumnNew from "./Blocks/SelectColumn";
+import axios from "axios";
 
 const minX = -100;
 const maxX = 100;
@@ -31,26 +32,104 @@ class csvFile {
   }
 }
 
+function convertData(data) {
+  const columns = Object.keys(data);
+  const numRows = Object.keys(data[columns[0]]).length;
+
+  let result = columns.join(",") + "\n";
+  for (let i = 0; i < numRows; i++) {
+    const rowValues = columns.map((col) => data[col][i]);
+    result += rowValues.join(",") + "\n";
+  }
+
+  return result;
+}
+
+function convertCSVToJSON(csv) {
+  const lines = csv.split("\n");
+  const headers = lines[0].split(",");
+  const jsonData = { data: {}, columns: headers };
+
+  for (let i = 1; i < lines.length; i++) {
+    const values = lines[i].split(",");
+    for (let j = 0; j < headers.length; j++) {
+      if (!jsonData.data[headers[j]]) {
+        jsonData.data[headers[j]] = {};
+      }
+      jsonData.data[headers[j]][i - 1] = values[j];
+    }
+  }
+
+  return jsonData;
+}
+
 const convertTextToCSV = (textData) => {
   const csvData = textData.split("\n").map((line) => line.split(","));
   return csvData.map((row) => row.join(",")).join("\n");
 };
+function cleanObject(obj) {
+  if (typeof obj !== 'object') {
+    return obj;
+  }
 
-const ExportOnClick = (id) => {
-  if (localStorage.getItem(`${"FileData" + id}`) === null) {
+  if (Array.isArray(obj)) {
+    // If obj is an array, clean its elements
+    for (let i = 0; i < obj.length; i++) {
+      obj[i] = cleanObject(obj[i]);
+    }
   } else {
-    const csvData = convertTextToCSV(
-      localStorage.getItem(`${"FileData" + id}`)
-    );
+    for (let key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        const cleanedKey = key.replace(/\r/g, ''); // Clean the key (column name)
+        
+        if (typeof obj[key] === 'string') {
+          obj[cleanedKey] = obj[key].replace(/\r/g, ''); // Clean the value
+          if (key !== cleanedKey) {
+            delete obj[key]; // Remove the old key if it's different
+          }
+        } else if (typeof obj[key] === 'object') {
+          obj[cleanedKey] = cleanObject(obj[key]); // Recursively clean nested objects
+          if (key !== cleanedKey) {
+            delete obj[key]; // Remove the old key if it's different
+          }
+        }
+      }
+    }
+  }
+
+  return obj;
+}
+const ExportOnClick = async (id, fileData, scols) => {
+  var filePrint = convertCSVToJSON(convertTextToCSV(fileData));
+  filePrint.columns = scols;
+  console.log(scols);
+  console.log(JSON.stringify(cleanObject(filePrint)));
+  const response = await fetch("http://localhost:8000/select-columns", {
+    method: "POST",
+    mode: "cors",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(filePrint),
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+    console.log(data);
+    const loadData = convertData(data.data);
+    console.log(loadData);
+
     const downloadLink = document.createElement("a");
     downloadLink.href = `data:text/csv;charset=utf-8,${encodeURIComponent(
-      csvData
+      loadData
     )}`;
-    downloadLink.download = localStorage.getItem(`${"Filename" + id}`);
+    downloadLink.download = "export.csv";
     downloadLink.style.display = "none";
     document.body.appendChild(downloadLink);
     downloadLink.click();
     document.body.removeChild(downloadLink);
+  } else {
+    console.error("Failed to fetch data");
   }
 };
 
@@ -79,7 +158,6 @@ function flattenArrayOfObjects(arrayOfObjects) {
 }
 
 function Playground() {
-  
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [strcode, setStrcode] = useState("");
@@ -106,12 +184,6 @@ function Playground() {
           nodeData.data.give = sourceNode.data;
           return [...nds];
         });
-
-        console.log(
-          "forwardData",
-          nodes.find((item) => item.id === targetID)
-        );
-
       } else {
         console.error("Source or target node not found.");
       }
@@ -124,16 +196,15 @@ function Playground() {
     UpdateNodeByID(id, newData);
   };
 
-  const onConnect =
-    ({ source, target }) => {
-      setEdges((eds) =>
-        addEdge(
-          { source, target, animated: true, style: { stroke: "#fff" } },
-          eds
-        )
-      );
-      forwardData(source, target);
-    };
+  const onConnect = ({ source, target }) => {
+    setEdges((eds) =>
+      addEdge(
+        { source, target, animated: true, style: { stroke: "#fff" } },
+        eds
+      )
+    );
+    forwardData(source, target);
+  };
 
   const onNodeClick = useCallback((event, node) => {
     console.log(node);
@@ -219,17 +290,15 @@ function Playground() {
 
   const excuteFlow = () => {
     const flowData = getFlowList();
-    flowData.map((item) => {
-      if (item.data && item.data.give && item.data.give.id) {
-        var lastItemId = item.data.give.id;
-        switch (item.type) {
-          case "exportnode":
-            ExportOnClick(lastItemId);
-            break;
-          default:
-            break;
-        }
-      } else {
+    var lastFileData = "";
+    var lastFileCols = [];
+    flowData.forEach((item) => {
+      if (item.type === "import") {
+        lastFileData = item.data.fileData;
+      } else if (item.type === "exportnode") {
+        ExportOnClick(item.id, lastFileData, lastFileCols);
+      }else if (item.type === "selectcolumnnew") {
+        lastFileCols = item.data.cols;
       }
     });
   };
@@ -388,7 +457,6 @@ function Playground() {
                 debug
               </button>
             </div>
-
 
             <div>
               <h4>Code</h4>

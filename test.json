@@ -2,60 +2,31 @@
   {
     "id": "0",
     "type": "import",
-    "position": { "x": -37, "y": -21.5 },
+    "position": { "x": -18, "y": -218 },
     "data": {
       "id": "0",
       "code": "import pandas as pd\ndf = pd.read_csv('moc.csv')",
       "fileData": "x,y\r\n2,2\r\n0,5\r\n6,8\r\n6,1\r\n8,5\r\n6,2\r\n",
       "fileName": "moc.csv",
-      "cols": ["x", "y"],
-      "give": { "type": "start", "id": "2" }
+      "cols": ["x", "y"]
     }
   },
   {
-    "id": "1",
+    "id": "2",
     "type": "selectcolumnnew",
-    "position": { "x": 130.5, "y": 59.5 },
+    "position": { "x": 110.5, "y": -129 },
     "data": {
       "type": "selectcolumnnew",
-      "id": "1",
-      "selectedColumns": ["x", "y"],
+      "id": "2",
+      "cols": ["x"],
       "give": {
         "id": "0",
         "code": "import pandas as pd\ndf = pd.read_csv('moc.csv')",
         "fileData": "x,y\r\n2,2\r\n0,5\r\n6,8\r\n6,1\r\n8,5\r\n6,2\r\n",
         "fileName": "moc.csv",
-        "cols": ["x", "y"],
-        "give": { "type": "start", "id": "2" }
-      }
-    }
-  },
-  {
-    "id": "2",
-    "type": "start",
-    "position": { "x": -94, "y": -40.5 },
-    "data": { "type": "start", "id": "2" }
-  },
-  {
-    "id": "3",
-    "type": "end",
-    "position": { "x": -2.5, "y": 153.5 },
-    "data": {
-      "type": "end",
-      "id": "3",
-      "give": {
-        "type": "selectcolumnnew",
-        "id": "1",
-        "selectedColumns": ["x", "y"],
-        "give": {
-          "id": "0",
-          "code": "import pandas as pd\ndf = pd.read_csv('moc.csv')",
-          "fileData": "x,y\r\n2,2\r\n0,5\r\n6,8\r\n6,1\r\n8,5\r\n6,2\r\n",
-          "fileName": "moc.csv",
-          "cols": ["x", "y"],
-          "give": { "type": "start", "id": "2" }
-        }
-      }
+        "cols": ["x", "y"]
+      },
+      "fileData": {}
     }
   }
 ]
