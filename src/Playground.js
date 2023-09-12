@@ -4,6 +4,8 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   addEdge,
+  ReactFlowProvider,
+  useReactFlow,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import "./Styles/BlockStyle.css";
@@ -15,6 +17,7 @@ import Assign from "./Blocks/Assign";
 import ImportNode from "./Blocks/ImportNode";
 import SelectColumnNode from "./Blocks/SelectColumnNode";
 import ExportNode from "./Blocks/ExportNode";
+import SelectColumnNew from "./Blocks/SelectColumn";
 
 const minX = -100;
 const maxX = 100;
@@ -58,6 +61,7 @@ const nodeTypes = {
   end: EndNode,
   import: ImportNode,
   selectcolumn: SelectColumnNode,
+  selectcolumnnew: SelectColumnNew,
   exportnode: ExportNode,
 };
 
@@ -75,34 +79,10 @@ function flattenArrayOfObjects(arrayOfObjects) {
 }
 
 function Playground() {
+  
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [strcode, setStrcode] = useState("");
-
-  const [csvlist, setCsvlist] = useState([]);
-  const [SelectCsv, setSelectCsv] = useState({
-    name: "",
-    data: "",
-  });
-
-  const CsvOnChange = (evt) => {
-    setSelectCsv({
-      ...SelectCsv,
-      [evt.target.name]: evt.target.value,
-    });
-  };
-
-  useEffect(() => {
-    const fileList = false || [new csvFile({ name: "No Data", data: "" })];
-    const mappedOptions = fileList.map((file) => {
-      return (
-        <option value={file.name} style={{ fontSize: "18px" }}>
-          {file.name}
-        </option>
-      );
-    });
-    setCsvlist(mappedOptions);
-  }, []);
 
   const GetNodeByID = (id) => {
     return nodes.find((nd) => nd.id === id);
@@ -126,7 +106,12 @@ function Playground() {
           nodeData.data.give = sourceNode.data;
           return [...nds];
         });
-     
+
+        console.log(
+          "forwardData",
+          nodes.find((item) => item.id === targetID)
+        );
+
       } else {
         console.error("Source or target node not found.");
       }
@@ -139,16 +124,16 @@ function Playground() {
     UpdateNodeByID(id, newData);
   };
 
-  const onConnect = useCallback(
+  const onConnect =
     ({ source, target }) => {
       setEdges((eds) =>
-        addEdge({ source, target, animated: true, style: { stroke: "#fff" } }, eds)
+        addEdge(
+          { source, target, animated: true, style: { stroke: "#fff" } },
+          eds
+        )
       );
       forwardData(source, target);
-    },
-    [nodes]
-  );
-  
+    };
 
   const onNodeClick = useCallback((event, node) => {
     console.log(node);
@@ -250,6 +235,7 @@ function Playground() {
   };
 
   const getCode = () => {
+    excuteFlow();
     setStrcode(JSON.stringify(getFlowList()));
   };
 
@@ -264,196 +250,185 @@ function Playground() {
     console.log(getConnectedNode());
   };
   return (
-    <div className="row d-flex justify-content-center">
-      <div className="col-10 p-2">
-        <h3>Low-Code No-Code</h3>
-        <div className=" d-flex justify-content-between">
-          <div
-            className="btn-group my-3"
-            role="group"
-            aria-label="Basic example"
-          ></div>
-          <div className="">
-            <button
-              className="btn btn-success"
-              type="button"
-              data-bs-toggle="offcanvas"
-              data-bs-target="#offcanvasScrolling"
-              aria-controls="offcanvasScrolling"
-            >
-              Show panel
-            </button>
+    <ReactFlowProvider>
+      <div className="row d-flex justify-content-center">
+        <div className="col-10 p-2">
+          <h3>Low-Code No-Code</h3>
+          <div className=" d-flex justify-content-between">
+            <div
+              className="btn-group my-3"
+              role="group"
+              aria-label="Basic example"
+            ></div>
+            <div className="">
+              <button
+                className="btn btn-success"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasScrolling"
+                aria-controls="offcanvasScrolling"
+              >
+                Show panel
+              </button>
 
-            <button
-              type="button"
-              className="btn btn-primary "
-              style={{ marginInline: 5 }}
-              onClick={() => createNode({ type: "start" })}
+              <button
+                type="button"
+                className="btn btn-primary "
+                style={{ marginInline: 5 }}
+                onClick={() => createNode({ type: "start" })}
+              >
+                Start
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary "
+                style={{ marginInline: 5 }}
+                onClick={() => createNode({ type: "end" })}
+              >
+                End
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary "
+                style={{ marginInline: 5 }}
+                onClick={() => createNode({ type: "import" })}
+              >
+                Import csv
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary "
+                style={{ marginInline: 5 }}
+                onClick={() => createNode({ type: "selectcolumnnew" })}
+              >
+                Select column
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary "
+                style={{ marginInline: 5 }}
+              >
+                Select row
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary "
+                style={{ marginInline: 5 }}
+                onClick={() => createNode({ type: "assign" })}
+              >
+                Assign
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary "
+                style={{ marginInline: 5 }}
+              >
+                Fill na
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary "
+                style={{ marginInline: 5 }}
+                onClick={() => createNode({ type: "printFunction" })}
+              >
+                Print
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary "
+                style={{ marginInline: 5 }}
+                onClick={() => createNode({ type: "exportnode" })}
+              >
+                Export
+              </button>
+            </div>
+          </div>
+
+          <div
+            className="offcanvas offcanvas-start p-2"
+            data-bs-scroll="true"
+            data-bs-backdrop="false"
+            tabIndex="-1"
+            id="offcanvasScrolling"
+            aria-labelledby="offcanvasScrollingLabel"
+            style={{ maxHeight: "100vh", overflow: "auto" }}
+          >
+            <div className="offcanvas-header">
+              <h5 className="offcanvas-title" id="offcanvasScrollingLabel"></h5>
+              <button
+                type="button"
+                className="btn-close text-reset"
+                data-bs-dismiss="offcanvas"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div
+              className="btn-group my-3 col-12"
+              role="group"
+              aria-label="Basic example"
             >
-              Start
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary "
-              style={{ marginInline: 5 }}
-              onClick={() => createNode({ type: "end" })}
-            >
-              End
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary "
-              style={{ marginInline: 5 }}
-              onClick={() => createNode({ type: "import" })}
-            >
-              Import csv
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary "
-              style={{ marginInline: 5 }}
-              onClick={() => createNode({ type: "selectcolumn" })}
-            >
-              Select column
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary "
-              style={{ marginInline: 5 }}
-            >
-              Select row
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary "
-              style={{ marginInline: 5 }}
-              onClick={() => createNode({ type: "assign" })}
-            >
-              Assign
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary "
-              style={{ marginInline: 5 }}
-            >
-              Fill na
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary "
-              style={{ marginInline: 5 }}
-              onClick={() => createNode({ type: "printFunction" })}
-            >
-              Print
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary "
-              style={{ marginInline: 5 }}
-              onClick={() => createNode({ type: "exportnode" })}
-            >
-              Export
-            </button>
+              <button
+                type="button"
+                className="btn btn-success"
+                onClick={getCode}
+              >
+                Get code
+              </button>
+              <button type="button" className="btn btn-info" onClick={RunCode}>
+                Run
+              </button>
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={ResetFlow}
+              >
+                Reset
+              </button>
+              <button type="button" className="btn btn-danger" onClick={debug}>
+                debug
+              </button>
+            </div>
+
+
+            <div>
+              <h4>Code</h4>
+              <textarea
+                className="form-control"
+                id="code-string"
+                value={strcode}
+                onChange={() => {}}
+                rows="20"
+              ></textarea>
+            </div>
+            <div>
+              <h4>Result</h4>
+              <textarea
+                className="form-control"
+                id="exampleFormControlTextarea1"
+                onChange={() => {}}
+                rows="3"
+              ></textarea>
+            </div>
           </div>
         </div>
-
-        <div
-          className="offcanvas offcanvas-start p-2"
-          data-bs-scroll="true"
-          data-bs-backdrop="false"
-          tabIndex="-1"
-          id="offcanvasScrolling"
-          aria-labelledby="offcanvasScrollingLabel"
-          style={{ maxHeight: "100vh", overflow: "auto" }}
-        >
-          <div className="offcanvas-header">
-            <h5 className="offcanvas-title" id="offcanvasScrollingLabel"></h5>
-            <button
-              type="button"
-              className="btn-close text-reset"
-              data-bs-dismiss="offcanvas"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div
-            className="btn-group my-3 col-12"
-            role="group"
-            aria-label="Basic example"
+        <div className="col-10 " style={{ height: "800px" }}>
+          <h3>Flow</h3>
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onNodeClick={onNodeClick}
+            nodeTypes={nodeTypes}
+            fitView
+            style={{ background: "#B8CEBF" }}
           >
-            <button type="button" className="btn btn-success" onClick={getCode}>
-              Get code
-            </button>
-            <button type="button" className="btn btn-info" onClick={RunCode}>
-              Run
-            </button>
-            <button
-              type="button"
-              className="btn btn-danger"
-              onClick={ResetFlow}
-            >
-              Reset
-            </button>
-            <button type="button" className="btn btn-danger" onClick={debug}>
-              debug
-            </button>
-          </div>
-          <button
-            type="button"
-            className="btn btn-secondary "
-            onClick={ExportOnClick}
-          >
-            Select Export
-          </button>
-          <div className="btn">
-            <select
-              name="CSVFILE"
-              id="CSVFILE"
-              value={SelectCsv.name}
-              onChange={CsvOnChange}
-              style={{ fontSize: "16px", width: "100%" }}
-            >
-              {csvlist}
-            </select>
-          </div>
-
-          <div>
-            <h4>Code</h4>
-            <textarea
-              className="form-control"
-              id="code-string"
-              value={strcode}
-              onChange={() => {}}
-              rows="20"
-            ></textarea>
-          </div>
-          <div>
-            <h4>Result</h4>
-            <textarea
-              className="form-control"
-              id="exampleFormControlTextarea1"
-              onChange={() => {}}
-              rows="3"
-            ></textarea>
-          </div>
+            <Controls />
+          </ReactFlow>
         </div>
       </div>
-      <div className="col-10 " style={{ height: "800px" }}>
-        <h3>Flow</h3>
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onNodeClick={onNodeClick}
-          nodeTypes={nodeTypes}
-          fitView
-          style={{ background: "#B8CEBF" }}
-        >
-          <Controls />
-        </ReactFlow>
-      </div>
-    </div>
+    </ReactFlowProvider>
   );
 }
 

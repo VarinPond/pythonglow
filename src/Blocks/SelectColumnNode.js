@@ -22,6 +22,7 @@ export default memo(({ data, isConnectable }) => {
     };
     
     useEffect(() => {
+        console.log(data);
         const colList = data.cols || ['No Data'];
 
         const mappedOptions = colList.map((col) => (
@@ -40,15 +41,14 @@ export default memo(({ data, isConnectable }) => {
         ));
         setColList(mappedOptions);
 
-    }, [ ]);
+    }, [selectedColumns]);
 
     useEffect(() => {
-        console.log(data);
         data.onChange(data.id, {
             ...SelectedColumn,
             colname: selectedColumns,
         });
-        
+
     }, [selectedColumns]);
 
 
