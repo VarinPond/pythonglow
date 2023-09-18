@@ -2,31 +2,51 @@
   {
     "id": "0",
     "type": "import",
-    "position": { "x": -18, "y": -218 },
+    "position": { "x": -157.5, "y": -49 },
     "data": {
       "id": "0",
       "code": "import pandas as pd\ndf = pd.read_csv('moc.csv')",
-      "fileData": "x,y\r\n2,2\r\n0,5\r\n6,8\r\n6,1\r\n8,5\r\n6,2\r\n",
+      "fileData": "x,y,z\r\n2,2,5\r\n0,5,8\r\n6,8,9\r\n6,1,7\r\n8,5,8\r\n6,2,8\r\n",
       "fileName": "moc.csv",
-      "cols": ["x", "y"]
+      "cols": ["x", "y", "z"]
     }
   },
   {
-    "id": "2",
+    "id": "1",
     "type": "selectcolumnnew",
-    "position": { "x": 110.5, "y": -129 },
+    "position": { "x": 0, "y": 11.5 },
     "data": {
       "type": "selectcolumnnew",
-      "id": "2",
+      "id": "1",
       "cols": ["x"],
       "give": {
         "id": "0",
         "code": "import pandas as pd\ndf = pd.read_csv('moc.csv')",
-        "fileData": "x,y\r\n2,2\r\n0,5\r\n6,8\r\n6,1\r\n8,5\r\n6,2\r\n",
+        "fileData": "x,y,z\r\n2,2,5\r\n0,5,8\r\n6,8,9\r\n6,1,7\r\n8,5,8\r\n6,2,8\r\n",
         "fileName": "moc.csv",
-        "cols": ["x", "y"]
-      },
-      "fileData": {}
+        "cols": ["x", "y", "z"]
+      }
+    }
+  },
+  {
+    "id": "2",
+    "type": "exportnode",
+    "position": { "x": -106.5, "y": 150 },
+    "data": {
+      "type": "exportnode",
+      "id": "2",
+      "give": {
+        "type": "selectcolumnnew",
+        "id": "1",
+        "cols": ["x"],
+        "give": {
+          "id": "0",
+          "code": "import pandas as pd\ndf = pd.read_csv('moc.csv')",
+          "fileData": "x,y,z\r\n2,2,5\r\n0,5,8\r\n6,8,9\r\n6,1,7\r\n8,5,8\r\n6,2,8\r\n",
+          "fileName": "moc.csv",
+          "cols": ["x", "y", "z"]
+        }
+      }
     }
   }
 ]

@@ -5,7 +5,6 @@ import ReactFlow, {
   useEdgesState,
   addEdge,
   ReactFlowProvider,
-  useReactFlow,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import "./Styles/BlockStyle.css";
@@ -18,19 +17,13 @@ import ImportNode from "./Blocks/ImportNode";
 import SelectColumnNode from "./Blocks/SelectColumnNode";
 import ExportNode from "./Blocks/ExportNode";
 import SelectColumnNew from "./Blocks/SelectColumn";
-import axios from "axios";
 
 const minX = -100;
 const maxX = 100;
 const minY = -100;
 const maxY = 100;
 
-class csvFile {
-  constructor(data) {
-    this.name = data.name;
-    this.data = data.data;
-  }
-}
+
 
 function convertData(data) {
   const columns = Object.keys(data);
@@ -99,10 +92,10 @@ function cleanObject(obj) {
 
   return obj;
 }
+
 const ExportOnClick = async (id, fileData, scols) => {
   var filePrint = convertCSVToJSON(convertTextToCSV(fileData));
   filePrint.columns = scols;
-  console.log(scols);
   console.log(JSON.stringify(cleanObject(filePrint)));
   const response = await fetch("http://localhost:8000/select-columns", {
     method: "POST",
@@ -115,9 +108,7 @@ const ExportOnClick = async (id, fileData, scols) => {
 
   if (response.ok) {
     const data = await response.json();
-    console.log(data);
     const loadData = convertData(data.data);
-    console.log(loadData);
 
     const downloadLink = document.createElement("a");
     downloadLink.href = `data:text/csv;charset=utf-8,${encodeURIComponent(
@@ -192,7 +183,6 @@ function Playground() {
   );
 
   const onNodesDataChange = (id, newData) => {
-    console.log("onNodesDataChange");
     UpdateNodeByID(id, newData);
   };
 
@@ -339,23 +329,6 @@ function Playground() {
               >
                 Show panel
               </button>
-
-              <button
-                type="button"
-                className="btn btn-primary "
-                style={{ marginInline: 5 }}
-                onClick={() => createNode({ type: "start" })}
-              >
-                Start
-              </button>
-              <button
-                type="button"
-                className="btn btn-primary "
-                style={{ marginInline: 5 }}
-                onClick={() => createNode({ type: "end" })}
-              >
-                End
-              </button>
               <button
                 type="button"
                 className="btn btn-primary "
@@ -379,14 +352,7 @@ function Playground() {
               >
                 Select row
               </button>
-              <button
-                type="button"
-                className="btn btn-primary "
-                style={{ marginInline: 5 }}
-                onClick={() => createNode({ type: "assign" })}
-              >
-                Assign
-              </button>
+
               <button
                 type="button"
                 className="btn btn-primary "
@@ -394,14 +360,7 @@ function Playground() {
               >
                 Fill na
               </button>
-              <button
-                type="button"
-                className="btn btn-primary "
-                style={{ marginInline: 5 }}
-                onClick={() => createNode({ type: "printFunction" })}
-              >
-                Print
-              </button>
+
               <button
                 type="button"
                 className="btn btn-primary "
